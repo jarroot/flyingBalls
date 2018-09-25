@@ -1,0 +1,10 @@
+.ball {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    position: absolute;
+}
+
+input, button {
+    padding: 0 10px;
+}
