@@ -1,0 +1,23 @@
+{
+  "name": "flyingBalls",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jarroot/flyingBalls.git"
+  },
+  "author": "jarroot",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jarroot/flyingBalls/issues"
+  },
+  "homepage": "https://github.com/jarroot/flyingBalls#readme",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.1"
+  }
+}

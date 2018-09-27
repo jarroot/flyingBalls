@@ -1,6 +1,6 @@
 function Ball() {
 
-	this._id = Ball.options.id;
+	this.ID = Ball.options._id;
 
 	this._color = Ball.initColor();
 	this._coords = {
@@ -8,12 +8,13 @@ function Ball() {
 		'top': Ball.intRandom(0, Ball.options.windowCoords.height)
 	};
 
-	this._direction = Ball.options.movementDirection[Ball.intRandom(0, 7)];
+	this._coords.right = this._coords.left + Ball.options._radius;
+	this._coords.bottom = this._coords.top + Ball.options._radius;
 
-	this.initBall();
-	this.move(this._direction, this._id);
+	this._radius = Ball.options._radius;
+	this.DIRECTION = Ball.options.movementDirection[Ball.intRandom(0, 7)];
 
-	Ball.options.id += 1;
+	Ball.options._id += 1;
 }
 
 
@@ -24,12 +25,13 @@ Ball.intRandom = function (min, max) {
 };
 
 Ball.initColor = function () {
-	return Ball.options.color[Ball.intRandom(0, Ball.options.color.length - 1)];
+	return Ball.options.colors[Ball.intRandom(0, Ball.options.colors.length - 1)];
 };
 
 Ball.options = {
-	'id': 0,
-	'color': ['red', 'blue', 'yellow', 'green', 'orange', 'purple', 'brown', 'black'],
+	'_id': 0,
+	'_radius': 10,
+	'colors': ['red', 'blue', 'yellow', 'green', 'orange', 'purple'],
 	'windowCoords': {
 		'width': $(window).width() - 10,
 		'height': $(window).height() - 10
@@ -42,8 +44,6 @@ Ball.options = {
 	]
 };
 
-console.log(Ball.options);
-
 
 /* PROTOTYPE ****/
 (function () {
@@ -51,9 +51,11 @@ console.log(Ball.options);
 	this.initBall = function () {
 
 		$('body').append('' +
-			'<div class="ball" id="' + this._id + '" style="background: ' + this._color + '; ' +
+			'<div class="ball" id="' + this.ID + '" style="background: ' + this._color + '; ' +
 			'left : ' + this._coords.left + 'px; ' +
-			'top : ' + this._coords.top + 'px"> ' +
+			'top : ' + this._coords.top + 'px; ' +
+			'width : ' + this._radius + 'px; ' +
+			'height: ' + this._radius + 'px;">' +
 			'</div>');
 
 	};
@@ -64,8 +66,8 @@ console.log(Ball.options);
 		var currentEl = $('#' + id);
 
 
-		var windowWidth = (Ball.options.windowCoords.width - 2);
-		var windowHeight = (Ball.options.windowCoords.height - 2);
+		var windowWidth = (Ball.options.windowCoords.width - 1);
+		var windowHeight = (Ball.options.windowCoords.height - 1);
 
 
 		function initNewDirection() {
@@ -77,7 +79,7 @@ console.log(Ball.options);
 			switch (direction) {
 				case 'top':
 					var currentElTop = currentEl.offset().top;
-					if (currentElTop <= 2) {
+					if (currentElTop <= 1) {
 						direction = initNewDirection('bottom', 'bottom-right', 'bottom-left');
 						goingTo(direction);
 						break;
@@ -102,7 +104,7 @@ console.log(Ball.options);
 
 				case 'left' :
 					var currentElLeft = currentEl.offset().left;
-					if (currentElLeft <= 2) {
+					if (currentElLeft <= 1) {
 						direction = initNewDirection('right', 'top-right', 'bottom-right');
 						goingTo(direction);
 						break;
@@ -130,7 +132,7 @@ console.log(Ball.options);
 					var currentElTop = currentEl.offset().top;
 					var currentElLeft = currentEl.offset().left;
 
-					if (currentElTop <= 2) {
+					if (currentElTop <= 1) {
 						direction = initNewDirection('bottom-left', 'bottom-right');
 						goingTo(direction);
 						break;
@@ -153,7 +155,7 @@ console.log(Ball.options);
 					var currentElTop = currentEl.offset().top;
 					var currentElLeft = currentEl.offset().left;
 
-					if (currentElTop <= 2) {
+					if (currentElTop <= 1) {
 						direction = initNewDirection('bottom-left', 'bottom-right');
 						goingTo(direction);
 						break;
@@ -180,7 +182,7 @@ console.log(Ball.options);
 						goingTo(direction);
 						break;
 
-					} else if (currentElLeft <= 2) {
+					} else if (currentElLeft <= 1) {
 						direction = initNewDirection('bottom-right', 'top-right');
 						goingTo(direction);
 						break;
@@ -223,25 +225,11 @@ console.log(Ball.options);
 		goingTo(direction);
 	};
 
+
+	this.initAndStartMove = function (direction, id) {
+		this.initBall();
+		this.move(direction, id);
+	};
+
 	this.constructor = Ball;
 }).call(Ball.prototype);
-
-
-/*$('#start').on('click', function () {
-
-	var ballsCount = $('#ballsCount').val();
-
-	if (ballsCount === 0)
-		return false;
-
-	$(this).remove();
-	$('#ballsCount').remove();
-
-	for (var i = 0; i <= ballsCount; i++) {
-		new Ball();
-	}
-});*/
-
-for (var i = 0; i <= 50; i++) {
-	new Ball();
-}
