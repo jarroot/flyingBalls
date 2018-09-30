@@ -3,17 +3,14 @@ function Ball() {
 	this.ID = Ball.options.prev_id_text + Ball.options.id;
 	this._radius = Ball.options.radius;
 
-	this._color = Ball.initColor();
+	this._color = Ball.randomArrayItem(Ball.options.colors);
+	this.DIRECTION = Ball.randomArrayItem(Ball.options.movementDirections);
+
 	this._coords = {
 		'left': Ball.intRandom(0, (Ball.options.windowCoords.width - this._radius)),
 		'top': Ball.intRandom(0, (Ball.options.windowCoords.height - this._radius))
 	};
 
-	this._coords.right = this._coords.left + Ball.options.radius;
-	this._coords.bottom = this._coords.top + Ball.options.radius;
-
-
-	this.DIRECTION = Ball.options.movementDirection[Ball.intRandom(0, 7)];
 
 	Ball.options.id++;
 }
@@ -25,8 +22,14 @@ Ball.intRandom = function (min, max) {
 	return rand;
 };
 
-Ball.initColor = function () {
-	return Ball.options.colors[Ball.intRandom(0, Ball.options.colors.length - 1)];
+Ball.randomArrayItem = function (array) {
+
+	var currentArray;
+	var identification = Array.isArray(array);
+
+	identification ? currentArray = array : currentArray = arguments;
+
+	return currentArray[Ball.intRandom(0, currentArray.length - 1)];
 };
 
 Ball.options = {
@@ -35,11 +38,11 @@ Ball.options = {
 	'radius': 10,
 	'colors': ['red', 'blue', 'yellow', 'green', 'orange', 'purple'],
 	'windowCoords': {
-		'width': +$(window).width(),
-		'height': +$(window).height()
+		'width': $(window).width(),
+		'height': $(window).height()
 	},
 
-	'movementDirection': [
+	'movementDirections': [
 		'top', 'left', 'right', 'bottom',
 		'top-left', 'top-right',
 		'bottom-left', 'bottom-right'
@@ -64,7 +67,7 @@ Ball.options = {
 
 	this.move = function (direction, id) {
 
-		var direction = direction;
+
 		var currentEl = $('#' + id);
 
 		var radius = currentEl.width();
@@ -73,15 +76,16 @@ Ball.options = {
 		var windowHeight = (Ball.options.windowCoords.height - 1);
 
 
-		function initNewDirection() {
-			var max = arguments.length - 1;
-			return arguments[Ball.intRandom(0, max)];
-		}
+		var initNewDirection = Ball.randomArrayItem;
 
 		function goingTo(direction) {
+
+			var currentElTop = currentEl.offset().top;
+			var currentElLeft = currentEl.offset().left;
+
 			switch (direction) {
 				case 'top':
-					var currentElTop = currentEl.offset().top;
+
 					if (currentElTop <= 1) {
 						direction = initNewDirection('bottom', 'bottom-right', 'bottom-left');
 						goingTo(direction);
@@ -93,7 +97,7 @@ Ball.options = {
 					break;
 
 				case 'bottom':
-					var currentElTop = currentEl.offset().top;
+
 					if (currentElTop + radius >= windowHeight) {
 						direction = initNewDirection('top', 'top-right', 'top-left');
 						goingTo(direction);
@@ -106,7 +110,7 @@ Ball.options = {
 
 
 				case 'left' :
-					var currentElLeft = currentEl.offset().left;
+
 					if (currentElLeft <= 1) {
 						direction = initNewDirection('right', 'top-right', 'bottom-right');
 						goingTo(direction);
@@ -119,7 +123,7 @@ Ball.options = {
 					break;
 
 				case 'right' :
-					var currentElLeft = currentEl.offset().left;
+
 					if (currentElLeft + radius >= windowWidth) {
 						direction = initNewDirection('left', 'top-left', 'bottom-left');
 						goingTo(direction);
@@ -132,8 +136,6 @@ Ball.options = {
 					break;
 
 				case 'top-right' :
-					var currentElTop = currentEl.offset().top;
-					var currentElLeft = currentEl.offset().left;
 
 					if (currentElTop <= 1) {
 						direction = initNewDirection('bottom-left', 'bottom-right');
@@ -155,8 +157,6 @@ Ball.options = {
 
 
 				case 'top-left' :
-					var currentElTop = currentEl.offset().top;
-					var currentElLeft = currentEl.offset().left;
 
 					if (currentElTop <= 1) {
 						direction = initNewDirection('bottom-left', 'bottom-right');
@@ -177,8 +177,6 @@ Ball.options = {
 					break;
 
 				case 'bottom-left' :
-					var currentElTop = currentEl.offset().top;
-					var currentElLeft = currentEl.offset().left;
 
 					if (currentElTop + radius >= windowHeight) {
 						direction = initNewDirection('top-left', 'top-right');
@@ -201,8 +199,6 @@ Ball.options = {
 
 
 				case 'bottom-right' :
-					var currentElTop = currentEl.offset().top;
-					var currentElLeft = currentEl.offset().left;
 
 					if (currentElTop + radius >= windowHeight) {
 						direction = initNewDirection('top-right', 'top-left');
