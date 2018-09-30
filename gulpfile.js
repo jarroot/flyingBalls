@@ -12,7 +12,6 @@ gulp.task('scripts', function () {
 		basePath.jsModules + '/Ball.js',
 		basePath.jsModules + '/BlackHole.js',
 
-
 		basePath.app + 'main.js'
 	];
 

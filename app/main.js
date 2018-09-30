@@ -1,11 +1,11 @@
-
 /* MAIN JS */
 
-for (var i = 0; i <= 10; i++) {
+for (var i = 0; i <= 60; i++) {
 	var ball = new Ball();
 	ball.initAndStartMove(ball.DIRECTION, ball.ID);
 }
 
-var blackHole = new BlackHole();
-blackHole.initAndStartMove(blackHole.DIRECTION, blackHole.ID);
-console.dir(blackHole);
+//var blackHole = new BlackHole();
+//blackHole.initAndStartMove(blackHole.DIRECTION, blackHole.ID, blackHole);
+
+

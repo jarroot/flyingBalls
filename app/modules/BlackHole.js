@@ -2,21 +2,28 @@ function BlackHole() {
 	Ball.call(this);
 
 	this._color = 'black';
-	this.ID = BlackHole.options._idPrevText + BlackHole.options._id;
+	this.ID = BlackHole.options.prev_id_text + BlackHole.options.id;
 
-	this._coords.right = this._coords.left + BlackHole.options._radius;
-	this._coords.bottom = this._coords.top + BlackHole.options._radius;
+	this._radius = BlackHole.options.radius;
 
-	this._radius = BlackHole.options._radius;
 
-	BlackHole.options._id++;
+	BlackHole.options.id++;
 }
 
-BlackHole.options = {
-	'_id': 0,
-	'_idPrevText': 'blackhole',
-	'_radius': 10
-};
+(function () {
+
+	this.options = {
+		'id': 0,
+		'prev_id_text': 'blackhole-',
+		'radius': 20
+	};
+
+}).call(BlackHole);
+
 
 BlackHole.prototype = Object.create(Ball.prototype);
-BlackHole.prototype.constructor = BlackHole;
+
+(function () {
+
+	this.constructor = BlackHole;
+}).call(BlackHole.prototype);
