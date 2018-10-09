@@ -105,27 +105,26 @@ function Ball(radius) {
 			var currentElTop = currentEl.offset().top;
 			var currentElLeft = currentEl.offset().left;
 
+
 			switch (direction) {
 				case 'top':
 
-					if (currentElTop <= 1) {
+					var toTopSpeed = currentElTop * 15;
+
+					currentEl.animate({'top': '1px'}, toTopSpeed, 'linear', function () {
 						direction = initNewDirection('bottom', 'bottom-right', 'bottom-left');
-						goingTo(direction);
-						break;
-					}
-					currentEl.animate({'top': (currentElTop - 1) + 'px'}, 2, function () {
 						goingTo(direction);
 					});
 					break;
 
 				case 'bottom':
 
-					if (currentElTop + radius >= windowHeight) {
+					var bottomCoord = windowHeight - radius;
+					var toBottomSpeed = (windowHeight - (currentElTop + radius) ) * 15;
+
+					currentEl.animate({'top': bottomCoord + 'px'}, toBottomSpeed, 'linear', function () {
+
 						direction = initNewDirection('top', 'top-right', 'top-left');
-						goingTo(direction);
-						break;
-					}
-					currentEl.animate({'top': (currentElTop + 1) + 'px'}, 2, function () {
 						goingTo(direction);
 					});
 					break;
@@ -133,26 +132,21 @@ function Ball(radius) {
 
 				case 'left' :
 
-					if (currentElLeft <= 1) {
-						direction = initNewDirection('right', 'top-right', 'bottom-right');
-						goingTo(direction);
-						break;
-					}
+					var toLeftSpeed = currentElLeft * 15;
 
-					currentEl.animate({'left': (currentElLeft - 1) + 'px'}, 2, function () {
+					currentEl.animate({'left': '1px'}, toLeftSpeed, 'linear', function () {
+						direction = initNewDirection('right', 'top-right', 'bottom-right');
 						goingTo(direction);
 					});
 					break;
 
 				case 'right' :
 
-					if (currentElLeft + radius >= windowWidth) {
-						direction = initNewDirection('left', 'top-left', 'bottom-left');
-						goingTo(direction);
-						break;
-					}
+					var rightCoord = windowWidth - radius;
+					var toRightSpeed = (windowWidth - (currentElLeft + radius)) * 15;
 
-					currentEl.animate({'left': (currentElLeft + 1) + 'px'}, 2, function () {
+					currentEl.animate({'left': rightCoord + 'px'}, toRightSpeed, 'linear', function () {
+						direction = initNewDirection('left', 'top-left', 'bottom-left');
 						goingTo(direction);
 					});
 					break;
@@ -172,7 +166,7 @@ function Ball(radius) {
 					currentEl.animate({
 						'left': (currentElLeft + 1) + 'px',
 						'top': (currentElTop - 1) + 'px'
-					}, 2, function () {
+					}, 15, function () {
 						goingTo(direction);
 					});
 					break;
@@ -193,7 +187,7 @@ function Ball(radius) {
 					currentEl.animate({
 						'left': (currentElLeft - 1) + 'px',
 						'top': (currentElTop - 1) + 'px'
-					}, 2, function () {
+					}, 15, function () {
 						goingTo(direction);
 					});
 					break;
@@ -214,7 +208,7 @@ function Ball(radius) {
 					currentEl.animate({
 						'left': (currentElLeft - 1) + 'px',
 						'top': (currentElTop + 1) + 'px'
-					}, 2, function () {
+					}, 15, function () {
 						goingTo(direction);
 					});
 					break;
@@ -235,7 +229,7 @@ function Ball(radius) {
 					currentEl.animate({
 						'left': (currentElLeft + 1) + 'px',
 						'top': (currentElTop + 1) + 'px'
-					}, 2, function () {
+					}, 15, function () {
 						goingTo(direction);
 					});
 					break;
