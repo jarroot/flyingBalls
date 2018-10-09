@@ -1,14 +1,20 @@
-function Ball() {
+function Ball(radius) {
+
+	var randomArrayItem,
+		intRandom;
+
+	randomArrayItem = Ball.randomArrayItem;
+	intRandom = Ball.intRandom;
 
 	this.ID = Ball.options.prev_id_text + Ball.options.id;
-	this._radius = Ball.options.radius;
+	this._radius = radius || intRandom(5, 30);
 
-	this._color = Ball.randomArrayItem(Ball.options.colors);
-	this.DIRECTION = Ball.randomArrayItem(Ball.options.movementDirections);
+	this._color = randomArrayItem(Ball.options.colors);
+	this.DIRECTION = randomArrayItem(Ball.options.movementDirections);
 
 	this._coords = {
-		'left': Ball.intRandom(0, (Ball.options.windowCoords.width - this._radius)),
-		'top': Ball.intRandom(0, (Ball.options.windowCoords.height - this._radius))
+		'left': intRandom(0, (Ball.options.windowCoords.width - this._radius)),
+		'top': intRandom(0, (Ball.options.windowCoords.height - this._radius))
 	};
 
 
@@ -16,44 +22,54 @@ function Ball() {
 }
 
 
-Ball.intRandom = function (min, max) {
-	var rand = min + Math.random() * (max + 1 - min);
-	rand = Math.floor(rand);
-	return rand;
-};
+/* Свойства и методы конструктора  */
+(function () {
 
-Ball.randomArrayItem = function (array) {
+	this.intRandom = function (min, max) {
+		var rand = min + Math.random() * (max + 1 - min);
+		rand = Math.floor(rand);
+		return rand;
+	};
 
-	var currentArray;
-	var identification = Array.isArray(array);
+	this.randomArrayItem = function (array) {
 
-	identification ? currentArray = array : currentArray = arguments;
+		var currentArray,
+			identification,
+			intRandom;
 
-	return currentArray[Ball.intRandom(0, currentArray.length - 1)];
-};
+		identification = Array.isArray(array);
+		intRandom = Ball.intRandom;
 
-Ball.options = {
-	'id': 0,
-	'prev_id_text': 'ball-',
-	'radius': 10,
-	'colors': ['red', 'blue', 'yellow', 'green', 'orange', 'purple'],
-	'windowCoords': {
-		'width': $(window).width(),
-		'height': $(window).height()
-	},
+		identification ? currentArray = array : currentArray = arguments;
 
-	'movementDirections': [
-		'top', 'left', 'right', 'bottom',
-		'top-left', 'top-right',
-		'bottom-left', 'bottom-right'
-	]
-};
+		return currentArray[intRandom(0, currentArray.length - 1)];
+	};
+
+	this.options = {
+		'id': 0,
+		'prev_id_text': 'ball-',
+		'colors': ['red', 'blue', 'yellow', 'green', 'orange', 'purple'],
+		'windowCoords': {
+			'width': window.innerWidth,
+			'height': window.innerHeight
+		},
+
+		'movementDirections': [
+			'top', 'left', 'right', 'bottom',
+			'top-left', 'top-right',
+			'bottom-left', 'bottom-right'
+		]
+	};
+
+
+}).call(Ball);
 
 
 /* PROTOTYPE ****/
 (function () {
 
 	this.init = function () {
+
 
 		$('body').append('' +
 			'<div class="ball" id="' + this.ID + '" style="background: ' + this._color + '; ' +
@@ -67,16 +83,22 @@ Ball.options = {
 
 	this.move = function (direction, id) {
 
+		var currentEl,
+			radius,
+			windowsCoords,
+			windowWidth,
+			windowHeight,
+			initNewDirection;
 
-		var currentEl = $('#' + id);
+		currentEl = $('#' + id);
+		radius = currentEl.width();
 
-		var radius = currentEl.width();
+		windowsCoords = Ball.options.windowCoords;
+		windowWidth = (windowsCoords.width - 1);
+		windowHeight = (windowsCoords.height - 1);
 
-		var windowWidth = (Ball.options.windowCoords.width - 1);
-		var windowHeight = (Ball.options.windowCoords.height - 1);
+		initNewDirection = Ball.randomArrayItem;
 
-
-		var initNewDirection = Ball.randomArrayItem;
 
 		function goingTo(direction) {
 
@@ -263,12 +285,40 @@ BlackHole.prototype = Object.create(Ball.prototype);
 }).call(BlackHole.prototype);
 /* MAIN JS */
 
-for (var i = 0; i <= 60; i++) {
-	var ball = new Ball();
-	ball.initAndStartMove(ball.DIRECTION, ball.ID);
-}
+(function () {
+	for (var i = 0; i <= 80; i++) {
+		var ball = new Ball();
+		ball.initAndStartMove(ball.DIRECTION, ball.ID);
+	}
+})();
 
-//var blackHole = new BlackHole();
-//blackHole.initAndStartMove(blackHole.DIRECTION, blackHole.ID, blackHole);
+
+var obj = (function () {
+
+	var name = 'vadim';
+	var options = {
+		name: name,
+		age: 26
+	};
 
 
+	return {
+		getName: function () {
+			return name;
+		},
+
+		getOptions: function () {
+			var newOptions = {};
+
+			for (var item in options) {
+				newOptions[item] = options[item];
+			}
+
+			return newOptions;
+		}
+	}
+
+})();
+
+
+console.dir(obj);
