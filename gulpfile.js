@@ -1,30 +1,30 @@
-const gulp = require('gulp');
-const concat = require('gulp-concat');
+var gulp = require('gulp');
+var concat = require('gulp-concat');
 
 var basePath = {
 	'app': './app/',
 	'jsModules': './app/modules'
 };
 
-gulp.task('scripts', function () {
+gulp.task('scripts', gulp.series(function (done) {
 	var scripts = [
-		basePath.jsModules + '/jquary.min.js',
+		basePath.jsModules + '/jquery.js',
 		basePath.jsModules + '/Ball.js',
-		basePath.jsModules + '/BlackHole.js',
+		//basePath.jsModules + '/BlackHole.js',
 
 		basePath.app + 'main.js'
 	];
 
-
 	gulp.src(scripts)
 		.pipe(concat('main.js'))
 		.pipe(gulp.dest('./dist/'));
-})
-;
+
+	done();
+}));
 
 
 gulp.task('watch', function () {
-	gulp.watch('./app/**/*.js', ['scripts']);
+	gulp.watch('./app/**/*.js', gulp.series('scripts'));
 });
 
-gulp.task('default', ['scripts', 'watch']);
+gulp.task('default', gulp.series('scripts', 'watch'));

@@ -1,20 +1,17 @@
 function Ball(radius) {
 
-	var randomArrayItem,
-		intRandom;
+	var
+		ballOpt = Ball.options,
+		randomArrayItem = Ball.randomArrayItem,
+		intRandom = Ball.intRandom;
 
-	randomArrayItem = Ball.randomArrayItem;
-	intRandom = Ball.intRandom;
-
-	this.ID = Ball.options.prev_id_text + Ball.options.id;
+	this.ID = ballOpt.prefix + ballOpt.id;
 	this._radius = radius || intRandom(5, 30);
-
-	this._color = randomArrayItem(Ball.options.colors);
-	this.DIRECTION = randomArrayItem(Ball.options.movementDirections);
-
+	this._color = randomArrayItem(ballOpt.colors);
+	this._direction = randomArrayItem(ballOpt.movementDirections);
 	this._coords = {
-		'left': intRandom(0, (Ball.options.windowCoords.width - this._radius)),
-		'top': intRandom(0, (Ball.options.windowCoords.height - this._radius))
+		'left': intRandom(0, (ballOpt.window.width - this._radius)),
+		'top': intRandom(0, (ballOpt.window.height - this._radius))
 	};
 
 
@@ -47,11 +44,11 @@ function Ball(radius) {
 
 	this.options = {
 		'id': 0,
-		'prev_id_text': 'ball-',
+		'prefix': 'ball-',
 		'colors': ['red', 'blue', 'yellow', 'green', 'orange', 'purple'],
-		'windowCoords': {
-			'width': window.innerWidth,
-			'height': window.innerHeight
+		'window': {
+			'width': window.innerWidth - 1,
+			'height': window.innerHeight - 1
 		},
 
 		'movementDirections': [
@@ -64,15 +61,14 @@ function Ball(radius) {
 
 }).call(Ball);
 
-
 /* PROTOTYPE ****/
 (function () {
 
 	this.init = function () {
 
-
-		$('body').append('' +
-			'<div class="ball" id="' + this.ID + '" style="background: ' + this._color + '; ' +
+		$('body').append(
+			'<div class="ball" id="' + this.ID + '" ' +
+			'style="background: ' + this._color + '; ' +
 			'left : ' + this._coords.left + 'px; ' +
 			'top : ' + this._coords.top + 'px; ' +
 			'width : ' + this._radius + 'px; ' +
@@ -81,169 +77,151 @@ function Ball(radius) {
 
 	};
 
-	this.move = function (direction, id) {
+	this.move = function (ball) {
 
-		var currentEl,
-			radius,
-			windowsCoords,
-			windowWidth,
-			windowHeight,
-			initNewDirection;
+		var
+			$BALL = $('#' + ball.ID),
+			radius = ball._radius,
 
-		currentEl = $('#' + id);
-		radius = currentEl.width();
+			windowsCoords = Ball.options.window,
+			windowWidth = (windowsCoords.width - 1),
+			windowHeight = (windowsCoords.height - 1),
+			initNewDirection = Ball.randomArrayItem,
 
-		windowsCoords = Ball.options.windowCoords;
-		windowWidth = (windowsCoords.width - 1);
-		windowHeight = (windowsCoords.height - 1);
-
-		initNewDirection = Ball.randomArrayItem;
+			newDirection = {
+				"top": ['bottom', 'bottom-right', 'bottom-left'],
+				"bottom": ['top', 'top-right', 'top-left'],
+				"left": ['right', 'top-right', 'bottom-right'],
+				"right": ['top', 'top-left', 'bottom-left']
+			};
 
 
 		function goingTo(direction) {
 
-			var currentElTop = currentEl.offset().top;
-			var currentElLeft = currentEl.offset().left;
+
+			var
+				ballTop = ball._coords.top,
+				ballLeft = ball._coords.left,
+				ballBottom = ballTop + radius,
+				ballRight = ballLeft + radius,
+				ballDirection = ball._direction;
 
 
 			switch (direction) {
 				case 'top':
 
-					var toTopSpeed = currentElTop * 15;
+					if (ballTop > 1) {
+						ball._coords.top -= 1;
+						$BALL.css("top", ball._coords.top);
+					} else {
 
-					currentEl.animate({'top': '1px'}, toTopSpeed, 'linear', function () {
-						direction = initNewDirection('bottom', 'bottom-right', 'bottom-left');
-						goingTo(direction);
-					});
+						ball._direction = initNewDirection(newDirection[ballDirection]);
+					}
 					break;
 
 				case 'bottom':
 
-					var bottomCoord = windowHeight - radius;
-					var toBottomSpeed = (windowHeight - (currentElTop + radius) ) * 15;
-
-					currentEl.animate({'top': bottomCoord + 'px'}, toBottomSpeed, 'linear', function () {
-
-						direction = initNewDirection('top', 'top-right', 'top-left');
-						goingTo(direction);
-					});
+					if (ballBottom < windowHeight) {
+						ball._coords.top += 1;
+						$BALL.css("top", ball._coords.top);
+					} else {
+						ball._direction = initNewDirection(newDirection[ballDirection]);
+					}
 					break;
-
 
 				case 'left' :
 
-					var toLeftSpeed = currentElLeft * 15;
+					if (ballLeft > 1) {
+						ball._coords.left -= 1;
+						$BALL.css("left", ball._coords.left);
+					} else {
+						ball._direction = initNewDirection(newDirection[ballDirection]);
+					}
 
-					currentEl.animate({'left': '1px'}, toLeftSpeed, 'linear', function () {
-						direction = initNewDirection('right', 'top-right', 'bottom-right');
-						goingTo(direction);
-					});
 					break;
 
 				case 'right' :
 
-					var rightCoord = windowWidth - radius;
-					var toRightSpeed = (windowWidth - (currentElLeft + radius)) * 15;
+					if (ballRight < windowWidth) {
+						ball._coords.left += 1;
+						$BALL.css("left", ball._coords.left);
+					} else {
+						ball._direction = initNewDirection(newDirection[ballDirection]);
+					}
 
-					currentEl.animate({'left': rightCoord + 'px'}, toRightSpeed, 'linear', function () {
-						direction = initNewDirection('left', 'top-left', 'bottom-left');
-						goingTo(direction);
-					});
 					break;
 
 				case 'top-right' :
 
-					if (currentElTop <= 1) {
-						direction = initNewDirection('bottom-left', 'bottom-right');
-						goingTo(direction);
-						break;
-					} else if (currentElLeft + radius >= windowWidth) {
-						direction = initNewDirection('top-left', 'bottom-left');
-						goingTo(direction);
-						break;
+					if (ballTop > 1 && ballRight < windowWidth) {
+						ball._coords.top -= 1;
+						ball._coords.left += 1;
+						$BALL.css({"top": ball._coords.top, "left": ball._coords.left});
+					} else if (ballTop <= 1) {
+						ball._direction = initNewDirection(newDirection.top);
+					} else if (ballRight >= windowWidth) {
+						ball._direction = initNewDirection(newDirection.right);
 					}
 
-					currentEl.animate({
-						'left': (currentElLeft + 1) + 'px',
-						'top': (currentElTop - 1) + 'px'
-					}, 15, function () {
-						goingTo(direction);
-					});
 					break;
 
 
 				case 'top-left' :
 
-					if (currentElTop <= 1) {
-						direction = initNewDirection('bottom-left', 'bottom-right');
-						goingTo(direction);
-						break;
-					} else if (currentElLeft <= 2) {
-						direction = initNewDirection('top-right', 'bottom-right');
-						goingTo(direction);
-						break;
+					if (ballTop > 1 && ballLeft > 1) {
+						ball._coords.top -= 1;
+						ball._coords.left -= 1;
+						$BALL.css({"top": ball._coords.top, "left": ball._coords.left});
+					} else if (ballTop <= 1) {
+						ball._direction = initNewDirection(newDirection.top);
+					} else if (ballLeft <= 1) {
+						ball._direction = initNewDirection(newDirection.right);
 					}
 
-					currentEl.animate({
-						'left': (currentElLeft - 1) + 'px',
-						'top': (currentElTop - 1) + 'px'
-					}, 15, function () {
-						goingTo(direction);
-					});
+					break;
+
+				case 'bottom-right' :
+
+					if (ballBottom < windowHeight && ballRight < windowWidth) {
+						ball._coords.top += 1;
+						ball._coords.left += 1;
+						$BALL.css({"top": ball._coords.top, "left": ball._coords.left});
+					} else if (ballBottom >= windowHeight) {
+						ball._direction = initNewDirection(newDirection.bottom);
+					} else if (ballRight >= windowWidth) {
+						ball._direction = initNewDirection(newDirection.right);
+					}
+
 					break;
 
 				case 'bottom-left' :
 
-					if (currentElTop + radius >= windowHeight) {
-						direction = initNewDirection('top-left', 'top-right');
-						goingTo(direction);
-						break;
-
-					} else if (currentElLeft <= 1) {
-						direction = initNewDirection('bottom-right', 'top-right');
-						goingTo(direction);
-						break;
+					if (ballBottom < windowHeight && ballRight > 1) {
+						ball._coords.top += 1;
+						ball._coords.left -= 1;
+						$BALL.css({"top": ball._coords.top, "left": ball._coords.left});
+					} else if (ballBottom >= windowHeight) {
+						ball._direction = initNewDirection(newDirection.bottom);
+					} else if (ballRight <= 1) {
+						ball._direction = initNewDirection(newDirection.right);
 					}
 
-					currentEl.animate({
-						'left': (currentElLeft - 1) + 'px',
-						'top': (currentElTop + 1) + 'px'
-					}, 15, function () {
-						goingTo(direction);
-					});
-					break;
-
-
-				case 'bottom-right' :
-
-					if (currentElTop + radius >= windowHeight) {
-						direction = initNewDirection('top-right', 'top-left');
-						goingTo(direction);
-						break;
-					} else if (currentElLeft + radius >= windowWidth) {
-						direction = initNewDirection('bottom-left', 'top-left');
-						goingTo(direction);
-						break;
-					}
-
-					currentEl.animate({
-						'left': (currentElLeft + 1) + 'px',
-						'top': (currentElTop + 1) + 'px'
-					}, 15, function () {
-						goingTo(direction);
-					});
 					break;
 			}
+
+			setTimeout(function () {
+				goingTo(ball._direction);
+			}, 10);
 		}
 
 
-		goingTo(direction);
+		goingTo(ball._direction);
 	};
 
 
-	this.initAndStartMove = function (direction, id) {
+	this.initAndStartMove = function () {
 		this.init();
-		this.move(direction, id);
+		this.move(this);
 	};
 
 	this.constructor = Ball;
